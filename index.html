@@ -1,152 +1,421 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Sistema de Chamados TI</title>
+<title>Sistema de Chamados TI</title>
 
-    <style>
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        background: #eef1f4;
+        margin: 0;
+        padding: 20px;
+    }
+
+    .container {
+        max-width: 850px;
+        margin: auto;
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 3px 15px #bbb;
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 5px;
+    }
+
+    .subtitulo {
+        text-align: center;
+        color: #666;
+        margin-bottom: 30px;
+    }
+
+    label {
+        display: block;
+        font-weight: bold;
+        margin-top: 16px;
+        margin-bottom: 5px;
+    }
+
+    input, textarea, select {
+        width: 100%;
+        padding: 11px;
+        border: 1px solid #aaa;
+        border-radius: 6px;
+        font-size: 15px;
+    }
+
+    textarea {
+        min-height: 90px;
+        resize: vertical;
+    }
+
+    .linha {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    button {
+        width: 100%;
+        padding: 13px;
+        margin-top: 15px;
+        border: none;
+        border-radius: 7px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .gerar {
+        background: #222;
+        color: white;
+    }
+
+    .copiar {
+        background: #e5e5e5;
+    }
+
+    .limpar {
+        background: #f2f2f2;
+    }
+
+    #cardChamado {
+        display: none;
+        margin-top: 30px;
+        padding: 22px;
+        border-radius: 10px;
+        border-left: 10px solid orange;
+        background: #fff7e6;
+    }
+
+    .status-resolvido {
+        border-left-color: green !important;
+        background: #e9f8ed !important;
+    }
+
+    .status-andamento {
+        border-left-color: orange !important;
+        background: #fff7e6 !important;
+    }
+
+    .status-nao {
+        border-left-color: red !important;
+        background: #ffeaea !important;
+    }
+
+    #saida {
+        white-space: pre-wrap;
+        line-height: 1.6;
+    }
+
+    .prazo-info {
+        font-weight: bold;
+        margin-top: 10px;
+    }
+
+    @media (max-width: 600px) {
+        .linha {
+            grid-template-columns: 1fr;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background: #f2f2f2;
-            margin: 0;
-            padding: 20px;
+            padding: 8px;
         }
 
         .container {
-            max-width: 700px;
-            margin: auto;
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px #aaa;
+            padding: 18px;
         }
-
-        h1 {
-            text-align: center;
-        }
-
-        label {
-            font-weight: bold;
-            display: block;
-            margin-top: 15px;
-        }
-
-        input,
-        textarea {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            box-sizing: border-box;
-        }
-
-        textarea {
-            min-height: 80px;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            margin-top: 15px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        #saida {
-            margin-top: 25px;
-            padding: 15px;
-            background: #f5f5f5;
-            white-space: pre-wrap;
-            border-radius: 8px;
-        }
-    </style>
+    }
+</style>
 </head>
 
 <body>
 
 <div class="container">
 
-    <h1>Sistema de Chamados TI</h1>
+<h1>Sistema de Chamados TI</h1>
+<div class="subtitulo">Registro e acompanhamento de atendimento</div>
 
-    <label>Nome do Chamado</label>
-    <input id="titulo">
+<div class="linha">
 
-    <label>O que houve</label>
-    <textarea id="problema"></textarea>
+    <div>
+        <label>Nº do Chamado</label>
+        <input id="numero" placeholder="Ex: 12345">
+    </div>
 
-    <label>Validação Inicial</label>
-    <textarea id="validacaoInicial"></textarea>
-
-    <label>Configuração/Execução</label>
-    <textarea id="execucao"></textarea>
-
-    <label>Validação</label>
-    <textarea id="validacao"></textarea>
-
-    <label>Resultado</label>
-    <textarea id="resultado"></textarea>
-
-    <button onclick="gerarChamado()">
-        Gerar Chamado
-    </button>
-
-    <button onclick="copiarChamado()">
-        Copiar Chamado
-    </button>
-
-    <div id="saida"></div>
+    <div>
+        <label>Área solicitante</label>
+        <select id="area">
+            <option value="">Selecione</option>
+            <option>Recepção</option>
+            <option>Governança</option>
+            <option>Eventos</option>
+            <option>A&B</option>
+            <option>Portaria</option>
+            <option>Manutenção</option>
+            <option>SPA</option>
+            <option>RH/DP</option>
+            <option>Compras</option>
+            <option>Monitoria</option>
+            <option>Almoxarifado</option>
+            <option>TI</option>
+            <option>Outro</option>
+        </select>
+    </div>
 
 </div>
 
+<label>Solicitante</label>
+<input id="solicitante" placeholder="Nome de quem solicitou o atendimento">
+
+<label>O que foi solicitado?</label>
+<textarea id="solicitacao"
+placeholder="Descreva o problema ou a solicitação..."></textarea>
+
+<label>O que ocasionou o problema?</label>
+<textarea id="causa"
+placeholder="Informe a causa identificada..."></textarea>
+
+<label>O que foi feito para resolver?</label>
+<textarea id="solucao"
+placeholder="Descreva os procedimentos realizados..."></textarea>
+
+<label>Será necessário encaminhar para outra pessoa/equipe?</label>
+<textarea id="encaminhamento"
+placeholder="Ex: Não foi necessário / Encaminhado para Blincast / Desbravador..."></textarea>
+
+<div class="linha">
+
+    <div>
+        <label>Prazo para resolução</label>
+        <select id="prazo">
+            <option value="20">20 minutos</option>
+            <option value="30">30 minutos</option>
+            <option value="40">40 minutos</option>
+            <option value="60">1 hora</option>
+            <option value="90">1 hora e 30 minutos</option>
+            <option value="120">2 horas</option>
+        </select>
+    </div>
+
+    <div>
+        <label>Status</label>
+        <select id="status">
+            <option value="andamento">🟠 Em andamento</option>
+            <option value="resolvido">🟢 Resolvido</option>
+            <option value="nao">🔴 Não resolvido</option>
+        </select>
+    </div>
+
+</div>
+
+<button class="gerar" onclick="gerarChamado()">
+Gerar Chamado
+</button>
+
+<button class="copiar" onclick="copiarChamado()">
+Copiar Chamado
+</button>
+
+<button class="limpar" onclick="limparFormulario()">
+Novo Chamado / Limpar
+</button>
+
+
+<div id="cardChamado">
+
+<div id="saida"></div>
+
+<div class="prazo-info" id="contador"></div>
+
+</div>
+
+</div>
+
+
 <script>
+
+let horarioLimite = null;
+let intervalo = null;
+
 
 function gerarChamado() {
 
-    const titulo =
-        document.getElementById("titulo").value;
+    const numero =
+        document.getElementById("numero").value || "Não informado";
 
-    const problema =
-        document.getElementById("problema").value;
+    const area =
+        document.getElementById("area").value || "Não informada";
 
-    const validacaoInicial =
-        document.getElementById("validacaoInicial").value;
+    const solicitante =
+        document.getElementById("solicitante").value || "Não informado";
 
-    const execucao =
-        document.getElementById("execucao").value;
+    const solicitacao =
+        document.getElementById("solicitacao").value || "Não informado";
 
-    const validacao =
-        document.getElementById("validacao").value;
+    const causa =
+        document.getElementById("causa").value || "Em análise";
 
-    const resultado =
-        document.getElementById("resultado").value;
+    const solucao =
+        document.getElementById("solucao").value || "Em andamento";
+
+    const encaminhamento =
+        document.getElementById("encaminhamento").value || "Não informado";
+
+    const prazo =
+        parseInt(document.getElementById("prazo").value);
+
+    const status =
+        document.getElementById("status").value;
+
+
+    const agora = new Date();
+
+    horarioLimite =
+        new Date(agora.getTime() + prazo * 60000);
+
+
+    const horaInicio =
+        agora.toLocaleTimeString("pt-BR", {
+            hour: "2-digit",
+            minute: "2-digit"
+        });
+
+    const horaPrazo =
+        horarioLimite.toLocaleTimeString("pt-BR", {
+            hour: "2-digit",
+            minute: "2-digit"
+        });
+
+
+    let textoStatus = "";
+
+    if (status === "resolvido") {
+        textoStatus = "🟢 RESOLVIDO";
+    }
+
+    if (status === "andamento") {
+        textoStatus = "🟠 EM ANDAMENTO";
+    }
+
+    if (status === "nao") {
+        textoStatus = "🔴 NÃO RESOLVIDO";
+    }
 
 
     const chamado =
-`NOME DO CHAMADO:
-${titulo}
+`CHAMADO Nº ${numero}
 
-O QUE HOUVE:
-${problema}
+ÁREA SOLICITANTE:
+${area}
 
-PROCEDIMENTO EXECUTADO
+SOLICITANTE:
+${solicitante}
 
-1. VALIDAÇÃO INICIAL
-${validacaoInicial}
+O QUE FOI SOLICITADO:
+${solicitacao}
 
-2. CONFIGURAÇÃO/EXECUÇÃO
-${execucao}
+O QUE OCASIONOU O PROBLEMA:
+${causa}
 
-3. VALIDAÇÃO
-${validacao}
+PROCEDIMENTO / SOLUÇÃO:
+${solucao}
 
-RESULTADO:
-${resultado}`;
+ENCAMINHAMENTO:
+${encaminhamento}
+
+STATUS:
+${textoStatus}
+
+INÍCIO DO ATENDIMENTO:
+${horaInicio}
+
+PRAZO PARA RESOLUÇÃO:
+${prazo} minutos
+
+HORÁRIO LIMITE:
+${horaPrazo}`;
 
 
-    document.getElementById("saida").innerText =
-        chamado;
+    document.getElementById("saida").innerText = chamado;
+
+
+    const card =
+        document.getElementById("cardChamado");
+
+    card.style.display = "block";
+
+    card.className = "";
+
+
+    if (status === "resolvido") {
+        card.classList.add("status-resolvido");
+    }
+
+    if (status === "andamento") {
+        card.classList.add("status-andamento");
+    }
+
+    if (status === "nao") {
+        card.classList.add("status-nao");
+    }
+
+
+    iniciarContador();
+}
+
+
+function iniciarContador() {
+
+    if (intervalo) {
+        clearInterval(intervalo);
+    }
+
+
+    function atualizar() {
+
+        const agora = new Date();
+
+        const diferenca =
+            horarioLimite - agora;
+
+
+        if (diferenca <= 0) {
+
+            document.getElementById("contador").innerText =
+                "⚠️ PRAZO EXCEDIDO";
+
+            clearInterval(intervalo);
+
+            return;
+        }
+
+
+        const minutos =
+            Math.floor(diferenca / 60000);
+
+        const segundos =
+            Math.floor((diferenca % 60000) / 1000);
+
+
+        document.getElementById("contador").innerText =
+            `⏱ Tempo restante: ${minutos} min ${segundos} s`;
+    }
+
+
+    atualizar();
+
+    intervalo =
+        setInterval(atualizar, 1000);
 }
 
 
@@ -156,13 +425,40 @@ function copiarChamado() {
         document.getElementById("saida").innerText;
 
     if (!texto) {
+
         alert("Primeiro gere o chamado.");
+
         return;
     }
 
+
     navigator.clipboard.writeText(texto);
 
-    alert("Chamado copiado!");
+    alert("Chamado copiado com sucesso!");
+}
+
+
+function limparFormulario() {
+
+    document.getElementById("numero").value = "";
+    document.getElementById("area").value = "";
+    document.getElementById("solicitante").value = "";
+    document.getElementById("solicitacao").value = "";
+    document.getElementById("causa").value = "";
+    document.getElementById("solucao").value = "";
+    document.getElementById("encaminhamento").value = "";
+
+    document.getElementById("prazo").value = "20";
+    document.getElementById("status").value = "andamento";
+
+    document.getElementById("saida").innerText = "";
+    document.getElementById("contador").innerText = "";
+
+    document.getElementById("cardChamado").style.display = "none";
+
+    if (intervalo) {
+        clearInterval(intervalo);
+    }
 }
 
 </script>
